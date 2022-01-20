@@ -1,7 +1,7 @@
 {
-  "name": "@pooltogether/pooltogether-contracts",
-  "version": "3.4.5",
-  "description": "PoolManager Prize Linked Savings Account Pool Smart Contracts",
+  "name": "@wooy/pool-contracts",
+  "version": "1.0.0",
+  "description": "Wooy Prize Linked Savings Account Pool Smart Contracts",
   "main": "index.js",
   "license": "GPL-3.0",
   "scripts": {
