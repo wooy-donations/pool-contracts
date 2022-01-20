@@ -1,26 +1,17 @@
+# Wooy Prize Savings Protocol
 
-<p align="center">
-  <a href="https://github.com/pooltogether/pooltogether--brand-assets">
-    <img src="https://github.com/pooltogether/pooltogether--brand-assets/blob/977e03604c49c63314450b5d432fe57d34747c66/logo/pooltogether-logo--purple-gradient.png?raw=true" alt="PoolTogether Brand" style="max-width:100%;" width="200">
-  </a>
-</p>
+[![built-with openzeppelin](https://img.shields.io/badge/built%20with-OpenZeppelin-3677FF)](https://docs.openzeppelin.com/)
 
-<br />
+The [Wooy](https://www.wooy.co/) Prize Savings Protocol Ethereum smart contracts.
 
-# PoolTogether Prize Savings Protocol
-
-[![<PoolTogether>](https://circleci.com/gh/pooltogether/pooltogether-pool-contracts.svg?style=shield)](https://circleci.com/gh/pooltogether/pooltogether-pool-contracts) [![Coverage Status](https://coveralls.io/repos/github/pooltogether/pooltogether-pool-contracts/badge.svg?branch=master&service=github&kill_cache=2)](https://coveralls.io/github/pooltogether/pooltogether-pool-contracts?branch=master) [![built-with openzeppelin](https://img.shields.io/badge/built%20with-OpenZeppelin-3677FF)](https://docs.openzeppelin.com/)
-
-The [PoolTogether](https://www.pooltogether.com/) Prize Savings Protocol Ethereum smart contracts.
-
-For an overview of the concepts and API please see the [documentation](https://docs.pooltogether.com/)
+For an overview of the concepts and API please see the [documentation](https://docs.wooy.co/)
 
 # Setup
 
 This project is available as an NPM package:
 
 ```bash
-$ yarn add @pooltogether/pooltogether-contracts
+$ yarn add @wooy/pool-contracts
 ```
 
 # Usage
@@ -30,22 +21,18 @@ $ yarn add @pooltogether/pooltogether-contracts
 There are deployment artifacts available in the `deployments/` directory. For example, to pull in the PoolWithMultipleWinnersBuilder artifact:
 
 ```javascript
-const PoolWithMultipleWinnersBuilder = require('@pooltogether/pooltogether-contracts/deployments/rinkeby/PoolWithMultipleWinnersBuilder.json')
-const {
-  abi, 
-  address, 
-  receipt
- } = PoolWithMultipleWinnersBuilder
+const PoolWithMultipleWinnersBuilder = require('@wooy/pool-contracts/deployments/rinkeby/PoolWithMultipleWinnersBuilder.json')
+const { abi, address, receipt } = PoolWithMultipleWinnersBuilder
 ```
 
 ## ABIs
 
-Application Binary Interfaces for all PoolTogether contracts and related contracts are available in the `abis/` directory.
+Application Binary Interfaces for all Wooy contracts and related contracts are available in the `abis/` directory.
 
 For example, to pull in the PrizePool ABI:
 
 ```javascript
-const PrizePool = require('@pooltogether/pooltogether-contracts/abis/PrizePool.json')
+const PrizePool = require('@wooy/pool-contracts/abis/PrizePool.json')
 ```
 
 # Development
@@ -58,7 +45,7 @@ Install dependencies:
 $ yarn
 ```
 
-We use [direnv](https://direnv.net/) to manage environment variables.  You'll likely need to install it.
+We use [direnv](https://direnv.net/) to manage environment variables. You'll likely need to install it.
 
 # Testing
 
@@ -84,7 +71,7 @@ $ yarn echidna
 
 # Fork Testing
 
-Ensure your environment variables are set up.  Make sure your Alchemy URL is set.  Now start a local fork:
+Ensure your environment variables are set up. Make sure your Alchemy URL is set. Now start a local fork:
 
 ```sh
 $ yarn start-fork
