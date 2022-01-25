@@ -1,8 +1,7 @@
 const networks = require('./hardhat.networks')
 
-const RNGBlockhashRopsten = require('@pooltogether/pooltogether-rng-contracts/deployments/ropsten/RNGBlockhash.json')
-const RNGBlockhashRinkeby = require('@pooltogether/pooltogether-rng-contracts/deployments/rinkeby/RNGBlockhash.json')
-const RNGBlockhashKovan = require('@pooltogether/pooltogether-rng-contracts/deployments/kovan/RNGBlockhash.json')
+const RNGBlockhashRinkeby = require('@wooy/rng-contracts/deployments/rinkeby/RNGBlockhash.json')
+const RNGBlockhashKovan = require('@wooy/rng-contracts/deployments/kovan/RNGBlockhash.json')
 
 require('@nomiclabs/hardhat-waffle')
 require('hardhat-deploy')
@@ -56,7 +55,6 @@ const config = {
     rng: {
       42: RNGBlockhashKovan.address,
       4: RNGBlockhashRinkeby.address,
-      3: RNGBlockhashRopsten.address,
     },
     admin: {
       42: testnetAdmin,
