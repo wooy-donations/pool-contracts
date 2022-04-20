@@ -1,3 +1,8 @@
+const accounts = process.env.PRIVATE_KEY
+  ? [process.env.PRIVATE_KEY]
+  : {
+      mnemonic: process.env.HDWALLET_MNEMONIC,
+    };
 const networks = {
   coverage: {
     url: 'http://127.0.0.1:8555',
@@ -19,9 +24,7 @@ if (process.env.ALCHEMY_URL && process.env.FORK_ENABLED) {
     forking: {
       url: process.env.ALCHEMY_URL,
     },
-    accounts: {
-      mnemonic: process.env.HDWALLET_MNEMONIC,
-    },
+    accounts,
   };
   if (process.env.FORK_BLOCK_NUMBER) {
     networks.hardhat.forking.blockNumber = parseInt(process.env.FORK_BLOCK_NUMBER);
@@ -32,100 +35,68 @@ if (process.env.ALCHEMY_URL && process.env.FORK_ENABLED) {
   };
 }
 
-if (process.env.HDWALLET_MNEMONIC) {
+if (process.env.HDWALLET_MNEMONIC || process.env.PRIVATE_KEY) {
   networks.xdai = {
     chainId: 100,
     url: 'https://rpc.xdaichain.com/',
-    accounts: {
-      mnemonic: process.env.HDWALLET_MNEMONIC,
-    },
+    accounts,
   };
   networks.poaSokol = {
     chainId: 77,
     url: 'https://sokol.poa.network',
-    accounts: {
-      mnemonic: process.env.HDWALLET_MNEMONIC,
-    },
+    accounts,
   };
   networks.matic = {
     chainId: 137,
     url: `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    accounts: {
-      mnemonic: process.env.HDWALLET_MNEMONIC,
-    },
+    accounts,
   };
   networks.mumbai = {
     chainId: 80001,
     url: 'https://rpc-mumbai.maticvigil.com',
-    accounts: {
-      mnemonic: process.env.HDWALLET_MNEMONIC,
-    },
+    accounts,
   };
   networks.bsc = {
     chainId: 56,
     url: 'https://bsc-dataseed.binance.org',
-    accounts: {
-      mnemonic: process.env.HDWALLET_MNEMONIC,
-    },
+    accounts,
   };
   networks.bscTestnet = {
     chainId: 97,
     url: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
-    accounts: {
-      mnemonic: process.env.HDWALLET_MNEMONIC,
-    },
+    accounts,
   };
   networks.celo = {
     chainId: 42220,
     url: 'https://forno.celo.org',
-    accounts: {
-      mnemonic: process.env.HDWALLET_MNEMONIC,
-    },
+    accounts,
   };
   networks.celoTestnet = {
     chainId: 44787,
     url: 'https://alfajores-forno.celo-testnet.org',
-    accounts: {
-      mnemonic: process.env.HDWALLET_MNEMONIC,
-    },
+    accounts,
   };
 }
 
 if (process.env.INFURA_API_KEY && (process.env.HDWALLET_MNEMONIC || process.env.PRIVATE_KEY)) {
   networks.kovan = {
     url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    accounts: process.env.PRIVATE_KEY
-      ? [process.env.PRIVATE_KEY]
-      : {
-          mnemonic: process.env.HDWALLET_MNEMONIC,
-        },
+    accounts,
   };
 
   networks.ropsten = {
     url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    accounts: process.env.PRIVATE_KEY
-      ? [process.env.PRIVATE_KEY]
-      : {
-          mnemonic: process.env.HDWALLET_MNEMONIC,
-        },
+    accounts,
   };
 
   networks.rinkeby = {
     url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    accounts: process.env.PRIVATE_KEY
-      ? [process.env.PRIVATE_KEY]
-      : {
-          mnemonic: process.env.HDWALLET_MNEMONIC,
-        },
+    accounts,
   };
 
   networks.mainnet = {
     url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    accounts: process.env.PRIVATE_KEY
-      ? [process.env.PRIVATE_KEY]
-      : {
-          mnemonic: process.env.HDWALLET_MNEMONIC,
-        },
+    accounts,
   };
 } else {
   console.warn('No infura or hdwallet available for testnets');

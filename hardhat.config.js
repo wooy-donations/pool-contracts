@@ -52,6 +52,7 @@ const config = {
       42: '0xDc029CE0C9246b0412aCCd09fff48ec97888d340', // kovan
       42220: '', // celo
       44787: '0xf56a3Fd95d01a0D38014dA249E48055a8a5ff6C1', // celo testnet
+      80001: '0x223e8043d33e9c4ccc38409CaAE7f62CB0F07a03',
     },
     rng: {
       1: '',
@@ -93,21 +94,26 @@ const config = {
       4: '0x6d7f0754ffeb405d23c51ce938289d4835be3b14',
       42: '0xf0d0eb522cfa50b716b3b1604c4f0fa6f04376ad',
     },
-    compoundPrizePoolProxyFactory: {
+    //Specific address of pooltogether's contracts, used when deploying the reduced version.
+    PTcompoundPrizePoolProxyFactory: {
       1: '0xFb92015f58B239296c9F13003b75D3B7CFB1111e', // mainnet
       4: '0x766b62E17AE78d095D3505d779741B1b5647d773', // rinkeby
+      80001: '0xE2ba9bEA2D8fcE8Fee675B13951e5A0aC886c9D0', // mumbai
     },
-    yieldSourcePrizePoolProxyFactory: {
+    PTyieldSourcePrizePoolProxyFactory: {
       1: '0x0835c8C4Ab282B5dBF06d59E1489eF17F1c40D96', // mainnet
       4: '0xD6073119B123859A0e390865A5630E0bB4E2670C', // rinkeby
+      80001: '0x17445F57ea2779dDa88Fce2bc4f58a245F9013DC', // mumbai
     },
-    stakePrizePoolProxyFactory: {
+    PTstakePrizePoolProxyFactory: {
       1: '0x166F6240a5560a34352b054468Deb85042c85142', // mainnet
       4: '0x2318b6B9C517cb42D2efaF61195966f8Dc073758', // rinkeby
+      80001: '0xfDA63A69F08c02F1B1ce46c57ebe010C303bacD0', // mumbai
     },
-    multipleWinnersBuilder: {
+    PTmultipleWinnersBuilder: {
       1: '0x10f61a36e1327036E5E416D52ff0f4b5c9EfAAA3', // mainnet
       4: '0x1020C38d8fa2ce7aF3235e7Dfbf974aC046bCb24', // rinkeby
+      80001: '0x335d7C74b174Edb2a2aB9717A2f2b42D0EC1b0c3', // mumbai
     },
   },
   etherscan: {

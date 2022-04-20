@@ -75,10 +75,10 @@ module.exports = async hardhat => {
     deployer,
     admin,
     reserveRegistry,
-    compoundPrizePoolProxyFactory,
-    yieldSourcePrizePoolProxyFactory,
-    stakePrizePoolProxyFactory,
-    multipleWinnersBuilder,
+    PTcompoundPrizePoolProxyFactory,
+    PTyieldSourcePrizePoolProxyFactory,
+    PTstakePrizePoolProxyFactory,
+    PTmultipleWinnersBuilder,
   } = await getNamedAccounts();
   const chainId = parseInt(await getChainId(), 10);
   // 31337 is unit testing, 1337 is for coverage
@@ -131,10 +131,10 @@ module.exports = async hardhat => {
   const poolWithMultipleWinnersBuilderResult = await deploy('PoolWithMultipleWinnersBuilder', {
     args: [
       reserveRegistry,
-      compoundPrizePoolProxyFactory,
-      yieldSourcePrizePoolProxyFactory,
-      stakePrizePoolProxyFactory,
-      multipleWinnersBuilder,
+      PTcompoundPrizePoolProxyFactory,
+      PTyieldSourcePrizePoolProxyFactory,
+      PTstakePrizePoolProxyFactory,
+      PTmultipleWinnersBuilder,
     ],
     from: deployer,
     skipIfAlreadyDeployed: true,
@@ -145,4 +145,4 @@ module.exports = async hardhat => {
   green('Contract Deployments Complete!');
   dim('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
 };
-module.exports.tags = ['eth-custom-reserve'];
+module.exports.tags = ['reduced-wooy'];
