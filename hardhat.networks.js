@@ -80,7 +80,7 @@ if (process.env.INFURA_API_KEY && (process.env.HDWALLET_MNEMONIC || process.env.
   };
   networks.matic = {
     chainId: 137,
-    url: `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    url: `https://polygon-mainnet.g.alchemy.com/v2/ppKPf-Z69GDERm1ZlN0RjIqYCcpJEift`,
     accounts,
   };
 
