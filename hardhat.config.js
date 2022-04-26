@@ -50,6 +50,7 @@ const config = {
       1: '0x680b6b5c1BDd9dFbcC4a5F26a41CFB1a9adbB582', // mainnet
       4: '0xdd0b4dB77A2A3245Acbaa653a81357fC1Be6f350', //"0x711c15464a6e498002b608245917fD8a32652fA0", // rinkeby
       42: '0xDc029CE0C9246b0412aCCd09fff48ec97888d340', // kovan
+      137: '0x680b6b5c1BDd9dFbcC4a5F26a41CFB1a9adbB582', // matic
       42220: '', // celo
       44787: '0xf56a3Fd95d01a0D38014dA249E48055a8a5ff6C1', // celo testnet
       80001: '0x223e8043d33e9c4ccc38409CaAE7f62CB0F07a03', // mumbai
