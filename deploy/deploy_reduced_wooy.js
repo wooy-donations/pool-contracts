@@ -70,7 +70,6 @@ module.exports = async hardhat => {
   const { deploy } = deployments;
   const { AddressZero } = ethers.constants;
 
-  console.log('nmnemonic', hardhat.network.config.accounts);
   let {
     deployer,
     admin,
