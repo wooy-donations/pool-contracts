@@ -46,11 +46,6 @@ if (process.env.HDWALLET_MNEMONIC || process.env.PRIVATE_KEY) {
     url: 'https://sokol.poa.network',
     accounts,
   };
-  networks.matic = {
-    chainId: 137,
-    url: `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    accounts,
-  };
   networks.mumbai = {
     chainId: 80001,
     url: 'https://rpc-mumbai.maticvigil.com',
@@ -81,6 +76,11 @@ if (process.env.HDWALLET_MNEMONIC || process.env.PRIVATE_KEY) {
 if (process.env.INFURA_API_KEY && (process.env.HDWALLET_MNEMONIC || process.env.PRIVATE_KEY)) {
   networks.kovan = {
     url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    accounts,
+  };
+  networks.matic = {
+    chainId: 137,
+    url: `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
     accounts,
   };
 
