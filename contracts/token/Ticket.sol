@@ -2,25 +2,20 @@
 
 pragma solidity 0.6.12;
 
-import "sortition-sum-tree-factory/contracts/SortitionSumTreeFactory.sol";
-import "@pooltogether/uniform-random-number/contracts/UniformRandomNumber.sol";
+import 'sortition-sum-tree-factory/contracts/SortitionSumTreeFactory.sol';
+import '@pooltogether/uniform-random-number/contracts/UniformRandomNumber.sol';
 
-import "./ControlledToken.sol";
-import "./TicketInterface.sol";
+import './ControlledToken.sol';
+import './TicketInterface.sol';
 
 contract Ticket is ControlledToken, TicketInterface {
   using SortitionSumTreeFactory for SortitionSumTreeFactory.SortitionSumTrees;
 
-  bytes32 constant private TREE_KEY = keccak256("PoolTogether/Ticket");
-  uint256 constant private MAX_TREE_LEAVES = 5;
+  bytes32 private constant TREE_KEY = keccak256('PoolTogether/Ticket');
+  uint256 private constant MAX_TREE_LEAVES = 5;
 
   /// @dev Emitted when an instance is initialized
-  event Initialized(
-    string _name,
-    string _symbol,
-    uint8 _decimals,
-    TokenControllerInterface _controller
-  );
+  event Initialized(string _name, string _symbol, uint8 _decimals, TokenControllerInterface _controller);
 
   // Ticket-weighted odds
   SortitionSumTreeFactory.SortitionSumTrees internal sortitionSumTrees;
@@ -35,21 +30,11 @@ contract Ticket is ControlledToken, TicketInterface {
     string memory _symbol,
     uint8 _decimals,
     TokenControllerInterface _controller
-  )
-    public
-    virtual
-    override
-    initializer
-  {
-    require(address(_controller) != address(0), "Ticket/controller-not-zero");
+  ) public virtual override initializer {
+    require(address(_controller) != address(0), 'Ticket/controller-not-zero');
     ControlledToken.initialize(_name, _symbol, _decimals, _controller);
     sortitionSumTrees.createTree(TREE_KEY, MAX_TREE_LEAVES);
-    emit Initialized(
-      _name,
-      _symbol,
-      _decimals,
-      _controller
-    );
+    emit Initialized(_name, _symbol, _decimals, _controller);
   }
 
   /// @notice Returns the user's chance of winning.
@@ -72,13 +57,25 @@ contract Ticket is ControlledToken, TicketInterface {
     return selected;
   }
 
+  function controllerSetBooster(
+    address _user,
+    uint256 balance,
+    uint256 booster
+  ) external onlyController {
+    sortitionSumTrees.set(TREE_KEY, balance * booster, bytes32(uint256(_user)));
+  }
+
   /// @dev Controller hook to provide notifications & rule validations on token transfers to the controller.
   /// This includes minting and burning.
   /// May be overridden to provide more granular control over operator-burning
   /// @param from Address of the account sending the tokens (address(0x0) on minting)
   /// @param to Address of the account receiving the tokens (address(0x0) on burning)
   /// @param amount Amount of tokens being transferred
-  function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override {
+  function _beforeTokenTransfer(
+    address from,
+    address to,
+    uint256 amount
+  ) internal virtual override {
     super._beforeTokenTransfer(from, to, amount);
 
     // optimize: ignore transfers to self
@@ -96,5 +93,4 @@ contract Ticket is ControlledToken, TicketInterface {
       sortitionSumTrees.set(TREE_KEY, toBalance, bytes32(uint256(to)));
     }
   }
-
 }
