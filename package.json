@@ -82,5 +82,8 @@
     "deployments/**",
     "deploy/**",
     "js/**"
-  ]
+  ],
+  "engines": {
+    "node": "=v14"
+  }
 }
