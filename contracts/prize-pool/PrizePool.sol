@@ -318,6 +318,10 @@ abstract contract PrizePool is
     return _currentAwardBalance;
   }
 
+  function updateBooster(address to) external returns(uint256){
+    
+  }
+
   function withdrawReserve(address to) external override onlyReserve returns (uint256) {
     uint256 amount = reserveTotalSupply;
     reserveTotalSupply = 0;
@@ -415,7 +419,8 @@ abstract contract PrizePool is
     if (address(prizeStrategy) != address(0)) {
       prizeStrategy.beforeTokenMint(to, amount, controlledToken, referrer);
     }
-    ControlledToken(controlledToken).controllerMint(to, amount);
+    uint24 booster = _tokenCreditBalances[controlledToken][to].booster;
+    ControlledToken(controlledToken).controllerMint(to, amount * booster);
   }
 
   /// @notice Called by the prize strategy to award external ERC721 prizes
