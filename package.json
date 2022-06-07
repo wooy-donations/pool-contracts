@@ -23,7 +23,7 @@
     "coverage": "yarn clean && HIDE_DEPLOY_LOG=true OPTIMIZER_DISABLED=true node --max-old-space-size=4096 ./node_modules/.bin/hardhat coverage --network coverage --temp build",
     "gas": "REPORT_GAS=true hardhat test --network localhost",
     "deploy": "hardhat --config hardhat.config.js deploy --tags full-deploy --write true --network",
-    "deploy:custom-reserve": "hardhat --config hardhat.config.js deploy --tags eth-custom-reserve --write true --network",
+    "deploy:reduced": "hardhat --config hardhat.config.js deploy --tags reduced-wooy --write true --network",
     "deploy-drips": "hardhat run ./js/deployDripTokens.js --network",
     "testnet-txs": "hardhat run ./js/runTestnetTransactions.js --network",
     "etherscan-verify": "hardhat run ./scripts/verify.js --network",
