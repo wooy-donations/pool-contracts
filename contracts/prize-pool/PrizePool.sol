@@ -138,6 +138,9 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
   /// @dev Emitted when there was an error thrown awarding an External ERC721
   event ErrorAwardingExternalERC721(bytes error);
 
+  /// @dev Emited when the address of the pool beneficiary is setted
+  event BeneficiaryAddressSetted(address _beneficiaryAddress);
+
 
   struct CreditPlan {
     uint128 creditLimitMantissa;
@@ -174,6 +177,9 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
 
   /// @dev the The awardable balance
   uint256 internal _currentAwardBalance;
+
+  /// @dev The address of the beneficiary (ONG) of the pool
+  address public beneficiaryAddress;
 
   /// @dev Stores the credit plan for each token.
   mapping(address => CreditPlan) internal _tokenCreditPlans;
@@ -230,6 +236,14 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
   /// @return True if the token may be awarded, false otherwise
   function canAwardExternal(address _externalToken) external view returns (bool) {
     return _canAwardExternal(_externalToken);
+  }
+
+  /// @dev Set beneficiary address in storage 
+  /// @param _beneficiaryAddress The address of the pool beneficiary
+  function setBeneficiary(address _beneficiaryAddress) external  {
+    require(_beneficiaryAddress != address(0), "Beneficiary address should not be address zero");
+    beneficiaryAddress = _beneficiaryAddress;
+    emit BeneficiaryAddressSetted(_beneficiaryAddress);
   }
 
   /// @notice Deposit assets into the Prize Pool in exchange for tokens

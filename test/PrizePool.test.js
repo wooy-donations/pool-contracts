@@ -215,6 +215,20 @@ describe('PrizePool', function() {
       })
     })
 
+    describe('setBeneficiary()', () => {
+      it('should revert with setted address zero', async () => {
+        await expect(prizePool.setBeneficiary(AddressZero)).to.be.revertedWith("Beneficiary address should not be address zero");
+      });
+
+      it('should set beneficiaryAddress', async () => {
+        const [addr1] = await hardhat.ethers.getSigners();
+
+        await prizePool.setBeneficiary(addr1.address);
+
+        expect(await prizePool.beneficiaryAddress()).to.equal(addr1.address);
+      })
+    })
+
     describe('depositTo()', () => {
       it('should revert when deposit exceeds liquidity cap', async () => {
         const amount = toWei('1')
