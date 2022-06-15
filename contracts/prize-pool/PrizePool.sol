@@ -99,6 +99,14 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
     uint256 exitFee
   );
 
+  /// @dev Event emitted when a percentage of assets are donated to beneficiary
+  event Donated(
+    address indexed operator,
+    address indexed from,
+    address indexed token,
+    uint256 amountDonated
+  );
+
   event ReserveWithdrawal(
     address indexed to,
     uint256 amount
@@ -277,6 +285,60 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
   /// @param amount The amount of tokens to redeem for assets.
   /// @param controlledToken The address of the token to redeem (i.e. ticket or sponsorship)
   /// @param maximumExitFee The maximum exit fee the caller is willing to pay.  This should be pre-calculated by the calculateExitFee() fxn.
+  /// @param donationPercentage The percentage of the withdrawal to donate
+  /// @return The actual exit fee paid
+  function withdrawInstantlyFrom(
+    address from,
+    uint256 amount,
+    address controlledToken,
+    uint256 maximumExitFee,
+    uint256 donationPercentage
+  )
+    public override
+    nonReentrant
+    onlyControlledToken(controlledToken)
+    returns (uint256)
+  {
+    (uint256 exitFee, uint256 burnedCredit) = _calculateEarlyExitFeeLessBurnedCredit(from, controlledToken, amount);
+    require(exitFee <= maximumExitFee, "PrizePool/exit-fee-exceeds-user-maximum");
+
+    // check if donation percentage is a value from 0 to 100
+    require(donationPercentage >= 0, "PrizePool/donation-percentage-is-less-than-zero");
+    require(donationPercentage <= 100, "PrizePool/donation-percentage-is-bigger-than-100");
+
+    // burn the credit
+    _burnCredit(from, controlledToken, burnedCredit);
+
+    // burn the tickets
+    ControlledToken(controlledToken).controllerBurnFrom(_msgSender(), from, amount);
+
+    // redeem the tickets less the fee
+    uint256 amountLessFee = amount.sub(exitFee);
+    uint256 redeemed = _redeem(amountLessFee);
+   uint256 donationAmount = (amount * donationPercentage) / 100;
+    uint256 redeemedLessDonation = redeemed.sub(donationAmount);
+
+    if (donationAmount > 0) {
+      require(beneficiaryAddress != address(0), "PrizePool/there-is-not-beneficiary-address");
+      _token().safeTransfer(beneficiaryAddress, donationAmount);
+      emit Donated(_msgSender(), from, controlledToken, amount);
+    }
+    
+    if (redeemedLessDonation > 0) {
+      _token().safeTransfer(from, redeemedLessDonation);
+
+      emit InstantWithdrawal(_msgSender(), from, controlledToken, amount, redeemedLessDonation, exitFee);
+    }
+
+    return exitFee;
+  }
+
+
+  /// @notice Withdraw assets from the Prize Pool instantly.  A fairness fee may be charged for an early exit.
+  /// @param from The address to redeem tokens from.
+  /// @param amount The amount of tokens to redeem for assets.
+  /// @param controlledToken The address of the token to redeem (i.e. ticket or sponsorship)
+  /// @param maximumExitFee The maximum exit fee the caller is willing to pay.  This should be pre-calculated by the calculateExitFee() fxn.
   /// @return The actual exit fee paid
   function withdrawInstantlyFrom(
     address from,
@@ -289,24 +351,7 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
     onlyControlledToken(controlledToken)
     returns (uint256)
   {
-    (uint256 exitFee, uint256 burnedCredit) = _calculateEarlyExitFeeLessBurnedCredit(from, controlledToken, amount);
-    require(exitFee <= maximumExitFee, "PrizePool/exit-fee-exceeds-user-maximum");
-
-    // burn the credit
-    _burnCredit(from, controlledToken, burnedCredit);
-
-    // burn the tickets
-    ControlledToken(controlledToken).controllerBurnFrom(_msgSender(), from, amount);
-
-    // redeem the tickets less the fee
-    uint256 amountLessFee = amount.sub(exitFee);
-    uint256 redeemed = _redeem(amountLessFee);
-
-    _token().safeTransfer(from, redeemed);
-
-    emit InstantWithdrawal(_msgSender(), from, controlledToken, amount, redeemed, exitFee);
-
-    return exitFee;
+    return withdrawInstantlyFrom(from, amount, controlledToken, maximumExitFee, 0);
   }
 
   /// @notice Limits the exit fee to the maximum as hard-coded into the contract

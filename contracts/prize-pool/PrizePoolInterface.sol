@@ -28,6 +28,21 @@ interface PrizePoolInterface {
   /// @param amount The amount of tokens to redeem for assets.
   /// @param controlledToken The address of the token to redeem (i.e. ticket or sponsorship)
   /// @param maximumExitFee The maximum exit fee the caller is willing to pay.  This should be pre-calculated by the calculateExitFee() fxn.
+  /// @param donationPercentage The percentage of withdrawal amount to transfer to beneficiary
+  /// @return The actual exit fee paid
+  function withdrawInstantlyFrom(
+    address from,
+    uint256 amount,
+    address controlledToken,
+    uint256 maximumExitFee,
+    uint256 donationPercentage
+  ) external returns (uint256);
+
+  /// @notice Withdraw assets from the Prize Pool instantly.  A fairness fee may be charged for an early exit.
+  /// @param from The address to redeem tokens from.
+  /// @param amount The amount of tokens to redeem for assets.
+  /// @param controlledToken The address of the token to redeem (i.e. ticket or sponsorship)
+  /// @param maximumExitFee The maximum exit fee the caller is willing to pay.  This should be pre-calculated by the calculateExitFee() fxn.
   /// @return The actual exit fee paid
   function withdrawInstantlyFrom(
     address from,
