@@ -400,12 +400,12 @@ describe('PrizePool', function() {
         await erc20token.mock.transfer.withArgs(wallet.address, toWei('9')).returns(true);
 
         await expect(
-          prizePool['withdrawInstantlyFrom(address,uint256,address,uint256,uint256)'](
+          prizePool['withdrawInstantlyFrom(address,uint256,address,uint256)'](
             wallet.address,
             amount,
             ticket.address,
             toWei('1'),
-            '0'
+            // '0'
           )
         )
           .to.emit(prizePool, 'InstantWithdrawal')
@@ -425,7 +425,7 @@ describe('PrizePool', function() {
         await yieldSourceStub.mock.redeem.withArgs(toWei('9')).returns(redeemed);
         await erc20token.mock.transfer.withArgs(wallet.address, redeemed).returns(true);
 
-        await expect(prizePool.withdrawInstantlyFrom(wallet.address, amount, ticket.address, toWei('1')))
+        await expect(prizePool['withdrawInstantlyFrom(address,uint256,address,uint256)'](wallet.address, amount, ticket.address, toWei('1')))
           .to.emit(prizePool, 'InstantWithdrawal')
           .withArgs(wallet.address, wallet.address, ticket.address, amount, redeemed, toWei('1'));
       });
@@ -445,7 +445,7 @@ describe('PrizePool', function() {
         await yieldSourceStub.mock.redeem.withArgs(redeemed).returns(redeemed);
         await erc20token.mock.transfer.withArgs(wallet.address, redeemed).returns(true);
 
-        await expect(prizePool.connect(wallet2).withdrawInstantlyFrom(wallet.address, amount, ticket.address, fee))
+        await expect(prizePool.connect(wallet2)['withdrawInstantlyFrom(address,uint256,address,uint256)'](wallet.address, amount, ticket.address, fee))
           .to.emit(prizePool, 'InstantWithdrawal')
           .withArgs(wallet2.address, wallet.address, ticket.address, amount, redeemed, fee);
       });
@@ -465,7 +465,7 @@ describe('PrizePool', function() {
         await erc20token.mock.transfer.withArgs(wallet.address, toWei('10')).returns(true);
 
         await expect(
-          prizePool.withdrawInstantlyFrom(wallet.address, amount, ticket.address, toWei('0.3'))
+          prizePool['withdrawInstantlyFrom(address,uint256,address,uint256)'](wallet.address, amount, ticket.address, toWei('0.3'))
         ).to.be.revertedWith('PrizePool/exit-fee-exceeds-user-maximum');
       });
 
@@ -487,7 +487,7 @@ describe('PrizePool', function() {
         await erc20token.mock.transfer.withArgs(wallet.address, toWei('10')).returns(true);
 
         // max exit fee is 10, well above
-        await expect(prizePool.withdrawInstantlyFrom(wallet.address, amount, ticket.address, toWei('10')))
+        await expect(prizePool['withdrawInstantlyFrom(address,uint256,address,uint256)'](wallet.address, amount, ticket.address, toWei('10')))
           .to.emit(prizePool, 'InstantWithdrawal')
           .withArgs(wallet.address, wallet.address, ticket.address, amount, toWei('10'), toWei('10'));
       });
@@ -505,7 +505,7 @@ describe('PrizePool', function() {
         await erc20token.mock.transfer.withArgs(wallet.address, toWei('10')).returns(true);
 
         await expect(
-          prizePool.withdrawInstantlyFrom(wallet.address, amount, ticket.address, toWei('0.3'))
+          prizePool['withdrawInstantlyFrom(address,uint256,address,uint256)'](wallet.address, amount, ticket.address, toWei('0.3'))
         ).to.be.revertedWith('PrizePool/exit-fee-exceeds-user-maximum');
       });
 
@@ -525,7 +525,7 @@ describe('PrizePool', function() {
         // PrizePool max exit fee: 5.5  (should be capped at this)
         // User max exit fee:      5.6
         await expect(
-          prizePool.withdrawInstantlyFrom(wallet.address, amount, ticket.address, toWei('5.6'))
+          prizePool['withdrawInstantlyFrom(address,uint256,address,uint256)'](wallet.address, amount, ticket.address, toWei('5.6'))
         ).to.not.be.revertedWith('PrizePool/exit-fee-exceeds-user-maximum');
       });
     });
