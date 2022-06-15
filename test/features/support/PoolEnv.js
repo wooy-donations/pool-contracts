@@ -300,7 +300,7 @@ function PoolEnv() {
       withdrawalAmount = toWei(tickets)
     }
     let prizePool = await this.prizePool(wallet)
-    await prizePool.withdrawInstantlyFrom(wallet.address, withdrawalAmount, ticket.address, toWei('1000'))
+    await prizePool['withdrawInstantlyFrom(address,uint256,address,uint256)'](wallet.address, withdrawalAmount, ticket.address, toWei('1000'))
     debug("done withdraw instantly")
   }
 

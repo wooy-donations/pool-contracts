@@ -347,7 +347,6 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
     uint256 maximumExitFee
   )
     external override
-    nonReentrant
     onlyControlledToken(controlledToken)
     returns (uint256)
   {
