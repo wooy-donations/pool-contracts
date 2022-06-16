@@ -405,7 +405,6 @@ describe('PrizePool', function() {
             amount,
             ticket.address,
             toWei('1'),
-            // '0'
           )
         )
           .to.emit(prizePool, 'InstantWithdrawal')
@@ -528,6 +527,49 @@ describe('PrizePool', function() {
           prizePool['withdrawInstantlyFrom(address,uint256,address,uint256)'](wallet.address, amount, ticket.address, toWei('5.6'))
         ).to.not.be.revertedWith('PrizePool/exit-fee-exceeds-user-maximum');
       });
+
+      it('should revert when trying to donate and there is not a beneficiary address', async () => {
+        let amount = toWei('10');
+
+        // updateAwardBalance
+        await yieldSourceStub.mock.balance.returns('0');
+        await ticket.mock.totalSupply.returns(amount);
+        await ticket.mock.balanceOf.withArgs(wallet.address).returns(amount);
+
+        await ticket.mock.controllerBurnFrom.withArgs(wallet.address, wallet.address, amount).returns();
+        await yieldSourceStub.mock.redeem.withArgs(toWei('9')).returns(toWei('9'));
+        await erc20token.mock.transfer.withArgs(wallet.address, toWei('9')).returns(true);
+
+        await expect(prizePool['withdrawInstantlyFrom(address,uint256,address,uint256,uint256)'](wallet.address, toWei('9'), ticket.address, toWei('1'), '20'))
+          .to.be.revertedWith("PrizePool/there-is-not-beneficiary-address")
+      })
+
+      it('should transfer donated porcentage to beneficiary', async () => {
+        const [beneficiary] = await hardhat.ethers.getSigners()
+        
+        let amount = toWei('10');
+        
+        await yieldSourceStub.mock.balance.returns('0');
+        await ticket.mock.totalSupply.returns(amount);
+        await ticket.mock.balanceOf.withArgs(wallet.address).returns(amount);
+        
+        await ticket.mock.controllerBurnFrom.withArgs(wallet.address, wallet.address, amount).returns();
+        await yieldSourceStub.mock.redeem.withArgs(toWei('9')).returns(toWei('9'));
+        await erc20token.mock.transfer.withArgs(wallet.address, toWei('9')).returns(true);
+        
+        await prizePool.setBeneficiary(beneficiary.address);
+        await expect(
+          prizePool['withdrawInstantlyFrom(address,uint256,address,uint256,uint256)'](
+            wallet.address,
+            amount,
+            ticket.address,
+            toWei('1'),
+            '50'
+          )
+        )
+          .to.emit(prizePool, 'Donated')
+          .withArgs(wallet.address, wallet.address, ticket.address, toWei('4.5'));
+      })
     });
 
     describe('balance()', () => {
