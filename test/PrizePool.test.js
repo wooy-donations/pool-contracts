@@ -404,7 +404,7 @@ describe('PrizePool', function() {
             wallet.address,
             amount,
             ticket.address,
-            toWei('1'),
+            toWei('1')
           )
         )
           .to.emit(prizePool, 'InstantWithdrawal')
@@ -540,35 +540,44 @@ describe('PrizePool', function() {
         await yieldSourceStub.mock.redeem.withArgs(toWei('9')).returns(toWei('9'));
         await erc20token.mock.transfer.withArgs(wallet.address, toWei('9')).returns(true);
 
-        await expect(prizePool['withdrawInstantlyFrom(address,uint256,address,uint256,uint256)'](wallet.address, toWei('9'), ticket.address, toWei('1'), '20'))
-          .to.be.revertedWith("PrizePool/there-is-not-beneficiary-address")
-      })
-
-      it('should transfer donated porcentage to beneficiary', async () => {
-        const [beneficiary] = await hardhat.ethers.getSigners()
-        
-        let amount = toWei('10');
-        
-        await yieldSourceStub.mock.balance.returns('0');
-        await ticket.mock.totalSupply.returns(amount);
-        await ticket.mock.balanceOf.withArgs(wallet.address).returns(amount);
-        
-        await ticket.mock.controllerBurnFrom.withArgs(wallet.address, wallet.address, amount).returns();
-        await yieldSourceStub.mock.redeem.withArgs(toWei('9')).returns(toWei('9'));
-        await erc20token.mock.transfer.withArgs(wallet.address, toWei('9')).returns(true);
-        
-        await prizePool.setBeneficiary(beneficiary.address);
         await expect(
           prizePool['withdrawInstantlyFrom(address,uint256,address,uint256,uint256)'](
             wallet.address,
             amount,
             ticket.address,
             toWei('1'),
-            '50'
+            '20'
           )
         )
-          .to.emit(prizePool, 'Donated')
-          .withArgs(wallet.address, wallet.address, ticket.address, toWei('4.5'));
+          .to.be.revertedWith("PrizePool/there-is-not-beneficiary-address")
+      })
+
+      it('should transfer donated porcentage to beneficiary', async () => {
+        let amount = toWei('10');
+        const [beneficiary] = await hardhat.ethers.getSigners();
+
+        // updateAwardBalance
+        await yieldSourceStub.mock.balance.returns('0');
+        await ticket.mock.totalSupply.returns(amount);
+        await ticket.mock.balanceOf.withArgs(wallet.address).returns(amount);
+
+        await prizePool.setBeneficiary(beneficiary.address);
+        
+        await ticket.mock.controllerBurnFrom.withArgs(wallet.address, wallet.address, amount).returns();
+        await yieldSourceStub.mock.redeem.withArgs(toWei('9')).returns(toWei('9'));
+        await erc20token.mock.transfer.withArgs(wallet.address, toWei('9')).returns(true);
+
+
+        await expect(
+          prizePool['withdrawInstantlyFrom(address,uint256,address,uint256,uint256)'](
+            wallet.address,
+            amount,
+            ticket.address,
+            toWei('1'),
+            '20'
+          )
+        )
+          .to.be.revertedWith("PrizePool/there-is-not-beneficiary-address")
       })
     });
 
