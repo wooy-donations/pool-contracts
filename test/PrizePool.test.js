@@ -553,33 +553,43 @@ describe('PrizePool', function() {
       })
 
       it('should transfer donated porcentage to beneficiary', async () => {
-        let amount = toWei('10');
+        const amount = toWei('10');
+        const redeemed = toWei('9');
+        const donated = toWei('5');
+        const withdrawed = toWei('4');
+        const fees = toWei('1');
+
         const [beneficiary] = await hardhat.ethers.getSigners();
+        await expect(prizePool.setBeneficiary(beneficiary.address))
+          .to.emit(prizePool, 'BeneficiaryAddressSetted')
+          .withArgs(beneficiary.address);
 
         // updateAwardBalance
         await yieldSourceStub.mock.balance.returns('0');
         await ticket.mock.totalSupply.returns(amount);
         await ticket.mock.balanceOf.withArgs(wallet.address).returns(amount);
 
-        await prizePool.setBeneficiary(beneficiary.address);
-        
         await ticket.mock.controllerBurnFrom.withArgs(wallet.address, wallet.address, amount).returns();
-        await yieldSourceStub.mock.redeem.withArgs(toWei('9')).returns(toWei('9'));
-        await erc20token.mock.transfer.withArgs(wallet.address, toWei('9')).returns(true);
+        await yieldSourceStub.mock.redeem.withArgs(redeemed).returns(redeemed);
+        await erc20token.mock.transfer.withArgs(beneficiary.address, donated).returns(true);
+        await erc20token.mock.transfer.withArgs(wallet.address, withdrawed).returns(true);
 
 
-        await expect(
-          prizePool['withdrawInstantlyFrom(address,uint256,address,uint256,uint256)'](
+
+        await expect(prizePool['withdrawInstantlyFrom(address,uint256,address,uint256,uint256)'](
             wallet.address,
             amount,
             ticket.address,
-            toWei('1'),
-            '20'
+            fees,
+            '50'
           )
         )
-          .to.be.revertedWith("PrizePool/there-is-not-beneficiary-address")
-      })
+        .to.emit(prizePool, 'InstantWithdrawal')
+        .withArgs(wallet.address, wallet.address, ticket.address, amount, withdrawed, fees)
+        .and.to.emit(prizePool, 'Donated')
+        .withArgs(wallet.address, wallet.address, ticket.address, donated);
     });
+    })
 
     describe('balance()', () => {
       it('should return zero if no deposits have been made', async () => {

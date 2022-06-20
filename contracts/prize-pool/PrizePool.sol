@@ -321,7 +321,7 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
     if (donationAmount > 0) {
       require(beneficiaryAddress != address(0), "PrizePool/there-is-not-beneficiary-address");
       _token().safeTransfer(beneficiaryAddress, donationAmount);
-      emit Donated(_msgSender(), from, controlledToken, amount);
+      emit Donated(_msgSender(), from, controlledToken, donationAmount);
     }
     
     if (redeemedLessDonation > 0) {
