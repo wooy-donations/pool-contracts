@@ -555,8 +555,8 @@ describe('PrizePool', function() {
       it('should transfer donated porcentage to beneficiary', async () => {
         const amount = toWei('10');
         const redeemed = toWei('9');
-        const donated = toWei('5');
-        const withdrawed = toWei('4');
+        const donated = toWei('4.5');
+        const withdrawed = toWei('4.5');
         const fees = toWei('1');
 
         const [beneficiary] = await hardhat.ethers.getSigners();
@@ -589,6 +589,70 @@ describe('PrizePool', function() {
         .and.to.emit(prizePool, 'Donated')
         .withArgs(wallet.address, wallet.address, ticket.address, donated);
     });
+
+    it("should revert if donation percentage is bigger than 100", async () => {
+        const amount = toWei('10');
+        const redeemed = toWei('9');
+        const donated = toWei('4.5');
+        const withdrawed = toWei('4.5');
+        const fees = toWei('1');
+
+        const [beneficiary] = await hardhat.ethers.getSigners();
+        await expect(prizePool.setBeneficiary(beneficiary.address))
+          .to.emit(prizePool, 'BeneficiaryAddressSetted')
+          .withArgs(beneficiary.address);
+
+        // updateAwardBalance
+        await yieldSourceStub.mock.balance.returns('0');
+        await ticket.mock.totalSupply.returns(amount);
+        await ticket.mock.balanceOf.withArgs(wallet.address).returns(amount);
+
+        await ticket.mock.controllerBurnFrom.withArgs(wallet.address, wallet.address, amount).returns();
+        await yieldSourceStub.mock.redeem.withArgs(redeemed).returns(redeemed);
+        await erc20token.mock.transfer.withArgs(beneficiary.address, donated).returns(true);
+        await erc20token.mock.transfer.withArgs(wallet.address, withdrawed).returns(true);
+
+        await expect(prizePool['withdrawInstantlyFrom(address,uint256,address,uint256,uint256)'](
+            wallet.address,
+            amount,
+            ticket.address,
+            fees,
+            '200'
+          )
+        ).to.be.revertedWith('PrizePool/donation-percentage-is-bigger-than-100');
+    })
+
+    it("should revert if donation percentage is smaller than 0", async () => {
+      const amount = toWei('10');
+      const redeemed = toWei('9');
+      const donated = toWei('4.5');
+      const withdrawed = toWei('4.5');
+      const fees = toWei('1');
+
+      const [beneficiary] = await hardhat.ethers.getSigners();
+      await expect(prizePool.setBeneficiary(beneficiary.address))
+        .to.emit(prizePool, 'BeneficiaryAddressSetted')
+        .withArgs(beneficiary.address);
+
+      // updateAwardBalance
+      await yieldSourceStub.mock.balance.returns('0');
+      await ticket.mock.totalSupply.returns(amount);
+      await ticket.mock.balanceOf.withArgs(wallet.address).returns(amount);
+
+      await ticket.mock.controllerBurnFrom.withArgs(wallet.address, wallet.address, amount).returns();
+      await yieldSourceStub.mock.redeem.withArgs(redeemed).returns(redeemed);
+      await erc20token.mock.transfer.withArgs(beneficiary.address, donated).returns(true);
+      await erc20token.mock.transfer.withArgs(wallet.address, withdrawed).returns(true);
+
+      await expect(prizePool['withdrawInstantlyFrom(address,uint256,address,uint256,uint256)'](
+          wallet.address,
+          amount,
+          ticket.address,
+          fees,
+          '-100'
+        )
+      ).to.be.reverted;
+  })
     })
 
     describe('balance()', () => {
