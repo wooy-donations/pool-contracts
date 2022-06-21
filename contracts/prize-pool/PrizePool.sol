@@ -315,7 +315,7 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
     // redeem the tickets less the fee
     uint256 amountLessFee = amount.sub(exitFee);
     uint256 redeemed = _redeem(amountLessFee);
-   uint256 donationAmount = (amount * donationPercentage) / 100;
+   uint256 donationAmount = (redeemed * donationPercentage) / 100;
     uint256 redeemedLessDonation = redeemed.sub(donationAmount);
 
     if (donationAmount > 0) {
