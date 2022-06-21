@@ -34,17 +34,20 @@ contract PoolWithMultipleWinnersBuilder {
   struct CompoundPrizePoolConfig {
     CTokenInterface cToken;
     uint256 maxExitFeeMantissa;
+    address beneficiaryAddress;
   }
 
   /// @notice The configuration used to initialize the Compound Prize Pool
   struct YieldSourcePrizePoolConfig {
     IYieldSource yieldSource;
     uint256 maxExitFeeMantissa;
+    address beneficiaryAddress;
   }
 
   struct StakePrizePoolConfig {
     IERC20Upgradeable token;
     uint256 maxExitFeeMantissa;
+    address beneficiaryAddress;
   }
 
   RegistryInterface public reserveRegistry;
@@ -97,6 +100,9 @@ contract PoolWithMultipleWinnersBuilder {
       prizeStrategyConfig.ticketCreditLimitMantissa.toUint128()
     );
     prizePool.transferOwnership(msg.sender);
+    if (prizePoolConfig.beneficiaryAddress != address(0)) {
+    prizePool.setBeneficiary(prizePoolConfig.beneficiaryAddress);
+    }
     emit CompoundPrizePoolWithMultipleWinnersCreated(prizePool, prizeStrategy);
     return prizePool;
   }
@@ -126,6 +132,9 @@ contract PoolWithMultipleWinnersBuilder {
       prizeStrategyConfig.ticketCreditLimitMantissa.toUint128()
     );
     prizePool.transferOwnership(msg.sender);
+    if (prizePoolConfig.beneficiaryAddress != address(0)) {
+    prizePool.setBeneficiary(prizePoolConfig.beneficiaryAddress);
+    }
     emit YieldSourcePrizePoolWithMultipleWinnersCreated(prizePool, prizeStrategy);
     return prizePool;
   }
@@ -155,6 +164,9 @@ contract PoolWithMultipleWinnersBuilder {
       prizeStrategyConfig.ticketCreditLimitMantissa.toUint128()
     );
     prizePool.transferOwnership(msg.sender);
+    if (prizePoolConfig.beneficiaryAddress != address(0)) {
+      prizePool.setBeneficiary(prizePoolConfig.beneficiaryAddress);
+    }
     emit StakePrizePoolWithMultipleWinnersCreated(prizePool, prizeStrategy);
     return prizePool;
   }
