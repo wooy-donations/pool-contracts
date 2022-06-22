@@ -99,6 +99,14 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
     uint256 exitFee
   );
 
+  /// @dev Event emitted when a percentage of assets are donated to beneficiary
+  event Donated(
+    address indexed operator,
+    address indexed from,
+    address indexed token,
+    uint256 amountDonated
+  );
+
   event ReserveWithdrawal(
     address indexed to,
     uint256 amount
@@ -138,6 +146,9 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
   /// @dev Emitted when there was an error thrown awarding an External ERC721
   event ErrorAwardingExternalERC721(bytes error);
 
+  /// @dev Emited when the address of the pool beneficiary is setted
+  event BeneficiaryAddressSet(address _beneficiaryAddress);
+
 
   struct CreditPlan {
     uint128 creditLimitMantissa;
@@ -174,6 +185,9 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
 
   /// @dev the The awardable balance
   uint256 internal _currentAwardBalance;
+
+  /// @dev The address of the beneficiary (ONG) of the pool
+  address public beneficiaryAddress;
 
   /// @dev Stores the credit plan for each token.
   mapping(address => CreditPlan) internal _tokenCreditPlans;
@@ -232,6 +246,14 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
     return _canAwardExternal(_externalToken);
   }
 
+  /// @dev Set beneficiary address in storage 
+  /// @param _beneficiaryAddress The address of the pool beneficiary
+  function setBeneficiary(address _beneficiaryAddress) external  {
+    require(_beneficiaryAddress != address(0), "Beneficiary address should not be address zero");
+    beneficiaryAddress = _beneficiaryAddress;
+    emit BeneficiaryAddressSet(_beneficiaryAddress);
+  }
+
   /// @notice Deposit assets into the Prize Pool in exchange for tokens
   /// @param to The address receiving the newly minted tokens
   /// @param amount The amount of assets to deposit
@@ -263,20 +285,26 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
   /// @param amount The amount of tokens to redeem for assets.
   /// @param controlledToken The address of the token to redeem (i.e. ticket or sponsorship)
   /// @param maximumExitFee The maximum exit fee the caller is willing to pay.  This should be pre-calculated by the calculateExitFee() fxn.
+  /// @param donationPercentage The percentage of the withdrawal to donate
   /// @return The actual exit fee paid
   function withdrawInstantlyFrom(
     address from,
     uint256 amount,
     address controlledToken,
-    uint256 maximumExitFee
+    uint256 maximumExitFee,
+    uint256 donationPercentage
   )
-    external override
+    public override
     nonReentrant
     onlyControlledToken(controlledToken)
     returns (uint256)
   {
     (uint256 exitFee, uint256 burnedCredit) = _calculateEarlyExitFeeLessBurnedCredit(from, controlledToken, amount);
     require(exitFee <= maximumExitFee, "PrizePool/exit-fee-exceeds-user-maximum");
+
+    // check if donation percentage is a value from 0 to 100
+    require(donationPercentage >= 0, "PrizePool/donation-percentage-is-less-than-zero");
+    require(donationPercentage <= 100, "PrizePool/donation-percentage-is-bigger-than-100");
 
     // burn the credit
     _burnCredit(from, controlledToken, burnedCredit);
@@ -287,12 +315,42 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
     // redeem the tickets less the fee
     uint256 amountLessFee = amount.sub(exitFee);
     uint256 redeemed = _redeem(amountLessFee);
+   uint256 donationAmount = (redeemed * donationPercentage) / 100;
+    uint256 redeemedLessDonation = redeemed.sub(donationAmount);
 
-    _token().safeTransfer(from, redeemed);
+    if (donationAmount > 0) {
+      require(beneficiaryAddress != address(0), "PrizePool/there-is-not-beneficiary-address");
+      _token().safeTransfer(beneficiaryAddress, donationAmount);
+      emit Donated(_msgSender(), from, controlledToken, donationAmount);
+    }
+    
+    if (redeemedLessDonation > 0) {
+      _token().safeTransfer(from, redeemedLessDonation);
 
-    emit InstantWithdrawal(_msgSender(), from, controlledToken, amount, redeemed, exitFee);
+      emit InstantWithdrawal(_msgSender(), from, controlledToken, amount, redeemedLessDonation, exitFee);
+    }
 
     return exitFee;
+  }
+
+
+  /// @notice Withdraw assets from the Prize Pool instantly.  A fairness fee may be charged for an early exit.
+  /// @param from The address to redeem tokens from.
+  /// @param amount The amount of tokens to redeem for assets.
+  /// @param controlledToken The address of the token to redeem (i.e. ticket or sponsorship)
+  /// @param maximumExitFee The maximum exit fee the caller is willing to pay.  This should be pre-calculated by the calculateExitFee() fxn.
+  /// @return The actual exit fee paid
+  function withdrawInstantlyFrom(
+    address from,
+    uint256 amount,
+    address controlledToken,
+    uint256 maximumExitFee
+  )
+    external override
+    onlyControlledToken(controlledToken)
+    returns (uint256)
+  {
+    return withdrawInstantlyFrom(from, amount, controlledToken, maximumExitFee, 0);
   }
 
   /// @notice Limits the exit fee to the maximum as hard-coded into the contract

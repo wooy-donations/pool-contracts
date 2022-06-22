@@ -41,7 +41,7 @@ async function run() {
 
     const withdrawAmount = ethers.utils.parseUnits("150000",6)
     
-    await usdcPrizePool.withdrawInstantlyFrom(timelock._address, withdrawAmount, "0x391a437196c81eEa7BBbBd5ED4DF6b49De4F5c96", withdrawAmount)
+    await usdcprizePool['withdrawInstantlyFrom(address,uint256,address,uint256)'](timelock._address, withdrawAmount, "0x391a437196c81eEa7BBbBd5ED4DF6b49De4F5c96", withdrawAmount)
 
     await usdcContract.transfer(c4Address, withdrawAmount)
 

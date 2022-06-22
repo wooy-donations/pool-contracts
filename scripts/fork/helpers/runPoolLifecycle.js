@@ -48,7 +48,7 @@ async function runPoolLifecycle (prizePool, signer) {
 
   dim(`Withdrawing...`)
   const tokenBalanceBeforeWithdrawal = await token.balanceOf(signer._address)
-  await prizePool.withdrawInstantlyFrom(signer._address, depositAmount, ticketAddress, depositAmount)
+  await prizePool['withdrawInstantlyFrom(address,uint256,address,uint256)'](signer._address, depositAmount, ticketAddress, depositAmount)
   const tokenDiffAfterWithdrawal = (await token.balanceOf(signer._address)).sub(tokenBalanceBeforeWithdrawal)
   dim(`Withdrew ${ethers.utils.formatUnits(tokenDiffAfterWithdrawal, decimals)} token`)
 
@@ -84,7 +84,7 @@ async function runPoolLifecycle (prizePool, signer) {
 
   await increaseTime(1000)
 
-  await prizePool.withdrawInstantlyFrom(signer._address, ticketBalance, ticketAddress, ticketBalance)
+  await prizePool['withdrawInstantlyFrom(address,uint256,address,uint256)'](signer._address, ticketBalance, ticketAddress, ticketBalance)
   
   const tokenDiff = (await token.balanceOf(signer._address)).sub(tokenBalance)
   dim(`Amount withdrawn is ${ethers.utils.formatUnits(tokenDiff, decimals)}`)

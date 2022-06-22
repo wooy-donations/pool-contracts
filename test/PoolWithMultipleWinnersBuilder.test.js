@@ -72,6 +72,7 @@ describe('PoolWithMultipleWinnersBuilder', () => {
       compoundPrizePoolConfig = {
         cToken: cToken.address,
         maxExitFeeMantissa: toWei('0.5'),
+        beneficiaryAddress: ethers.constants.AddressZero
       }
     })
 
@@ -117,7 +118,8 @@ describe('PoolWithMultipleWinnersBuilder', () => {
     beforeEach(async () => {
       stakePrizePoolConfig = {
         token: cToken.address,
-        maxExitFeeMantissa: toWei('0.5')
+        maxExitFeeMantissa: toWei('0.5'),
+        beneficiaryAddress: ethers.constants.AddressZero
       }
     })
 
@@ -156,7 +158,8 @@ describe('PoolWithMultipleWinnersBuilder', () => {
     beforeEach(async () => {
       yieldSourcePrizePoolConfig = {
         yieldSource: cDaiYieldSource.address,
-        maxExitFeeMantissa: toWei('0.5')
+        maxExitFeeMantissa: toWei('0.5'),
+        beneficiaryAddress: ethers.constants.AddressZero
       }
     })
 
