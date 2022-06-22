@@ -147,7 +147,7 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
   event ErrorAwardingExternalERC721(bytes error);
 
   /// @dev Emited when the address of the pool beneficiary is setted
-  event BeneficiaryAddressSetted(address _beneficiaryAddress);
+  event BeneficiaryAddressSet(address _beneficiaryAddress);
 
 
   struct CreditPlan {
@@ -251,7 +251,7 @@ abstract contract PrizePool is PrizePoolInterface, OwnableUpgradeable, Reentranc
   function setBeneficiary(address _beneficiaryAddress) external  {
     require(_beneficiaryAddress != address(0), "Beneficiary address should not be address zero");
     beneficiaryAddress = _beneficiaryAddress;
-    emit BeneficiaryAddressSetted(_beneficiaryAddress);
+    emit BeneficiaryAddressSet(_beneficiaryAddress);
   }
 
   /// @notice Deposit assets into the Prize Pool in exchange for tokens
