@@ -305,3 +305,4 @@ module.exports = async (hardhat) => {
   dim("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
 
 };
+module.exports.tags = ['full-deploy'];
