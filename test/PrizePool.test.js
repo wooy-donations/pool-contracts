@@ -561,7 +561,7 @@ describe('PrizePool', function() {
 
         const [beneficiary] = await hardhat.ethers.getSigners();
         await expect(prizePool.setBeneficiary(beneficiary.address))
-          .to.emit(prizePool, 'BeneficiaryAddressSetted')
+          .to.emit(prizePool, 'BeneficiaryAddressSet')
           .withArgs(beneficiary.address);
 
         // updateAwardBalance
@@ -599,7 +599,7 @@ describe('PrizePool', function() {
 
         const [beneficiary] = await hardhat.ethers.getSigners();
         await expect(prizePool.setBeneficiary(beneficiary.address))
-          .to.emit(prizePool, 'BeneficiaryAddressSetted')
+          .to.emit(prizePool, 'BeneficiaryAddressSet')
           .withArgs(beneficiary.address);
 
         // updateAwardBalance
@@ -631,7 +631,7 @@ describe('PrizePool', function() {
 
       const [beneficiary] = await hardhat.ethers.getSigners();
       await expect(prizePool.setBeneficiary(beneficiary.address))
-        .to.emit(prizePool, 'BeneficiaryAddressSetted')
+        .to.emit(prizePool, 'BeneficiaryAddressSet')
         .withArgs(beneficiary.address);
 
       // updateAwardBalance
